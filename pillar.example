@@ -18,8 +18,11 @@ graylog:
         status: 'Active'
     graylog:
       restart_service_after_state_change: 'true'
+      repo_version: '2.4'
+      repo_baseurl: 'https://packages.graylog2.org/repo/el/stable/2.4/$basearch/'
+      repo_gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-graylog'
       install_type: 'package'                                   # Install type can be package or tarball    
-      latest_tarball: 'graylog-2.2.0-beta.6.tgz'                # Name of the release tar file
+      latest_tarball: 'graylog-2.4.3.tgz'                       # Name of the release tar file
       use_redirection: 'false'                                  # Redirect port 80 to port 9000
       base_dir: '/usr/share'                                    # /usr/share is default for package install
       log4j2_log_path: '/var/log/graylog-server'                # Path for log files
@@ -49,13 +52,14 @@ graylog:
         enable_gzip: 'true'                                     # Enable gzip
         thread_pool_size: '16'                                  # Web thread pool size
       elasticsearch:
+        hosts: 'http://127.0.0.1:9200'                          # ES hosts Graylog should connect to
+        socket_timeout: '60s'                                   # Response wait from an ES server (default 60s)
+        max_total_connections: '20'                             # Total connections to ES cluster (default 20)
+        max_total_connections_per_route: '2'                    # Total connections per ES node (default 2)
         shards: '2'                                             # Number of shards to use
         replicas: '0'                                           # Number of replicas to use
         index_prefix: 'graylog'                                 # ES index prefix
         template_name: 'graylog-internal'                       # ES template name
-        cluster_name: 'graylog'                                 # ES cluster name
-        discovery_zen_ping_unicast_hosts: 'graylog00:9300'      # Unicast hosts should be list of es masters
-        node_name_prefix: 'graylog-'                            # ES node name prefix
       transport_email:
         enabled: 'false'                                        # Enable/Disable email 
         hostname: 'mail.domain.tld'                             # Email server hostname
@@ -68,11 +72,6 @@ graylog:
         subject_prefix: '[graylog]'                             # Email subject prefix
         from_email: 'graylog@domain.tld'                        # Email from address
         web_interface_url: 'http://graylog00.domain.tld'        # Email web interface link
-      mongodb:
+      mongodb:                                                  # MongoDB connection string
         uri: 'mongodb://gluser:password@localhost:27017/graylog'
-      sources:
-        - name: 'graylog00'                     # Name of node
-          master: 'true'                        # Node is Master
-          ip: '192.168.2.20'                    # IP address for this node
-          mask: '/32'                           # Subnet Mask for this node
-          fqdn: 'graylog00.alias454.local'      # FQDN for this node
+
